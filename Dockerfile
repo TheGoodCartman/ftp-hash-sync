@@ -1,4 +1,4 @@
 FROM alpine:latest
-RUN apk --no-cache add bash ftp
+RUN apk --no-cache add bash ncftp
 COPY entrypoint.sh /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["bash", "/entrypoint.sh"]
