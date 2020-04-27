@@ -65,17 +65,17 @@ EOF
 # Diff returns non-zero if there are differences - disable error checking for the next line
 set +e
 
-# Diff, then remove first 3 lines (with filenames), convert to FTP commands, and sort to reduce folder changes and ensure RMs are before PUTs
-diff -U0 /remotehashes /localhashes | \
-	tail -n +3 | \
-	sed -nr \
-		-e 's/^-[^ ]+ +\.\/(.*)$/rm "\1"/p' \
-		-e 's/^\+[^ ]+ +\.\/(.*)$/put "\1" -o "\1"/p' | \
-	sort
->>/syncscript
+# Diff, then remove first 3 lines (with filenames)
+diff -U0 /remotehashes /localhashes | tail -n +3 >/hashdiff
 
 # Reenable error checking
 set -e
+
+# First RMs
+sed -nr 's/^-[^ ]+ +\.\/(.*)$/rm "\1"/p' /hashdiff | sort >>/syncscript
+
+# The PUTs
+sed -nr 's/^\+[^ ]+ +\.\/(.*)$/put "\1" -o "\1"/p' /hashdiff | sort >>/syncscript
 
 cat <<EOF >>/syncscript
 put /localhashes -o "${INPUT_HASHFILE}"
