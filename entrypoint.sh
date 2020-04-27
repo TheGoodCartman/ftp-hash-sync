@@ -62,6 +62,9 @@ set passive yes
 cd "${INPUT_DESTINATION}"
 EOF
 
+# Make directories
+find -type d | sed -nr 's|^\./(.*)|mkdir -f "\1"|p' >>/syncscript
+
 # Diff returns non-zero if there are differences - disable error checking for the next line
 set +e
 
@@ -72,10 +75,10 @@ diff -U0 /remotehashes /localhashes | tail -n +3 >/hashdiff
 set -e
 
 # First RMs
-sed -nr 's/^-[^ ]+ +\.\/(.*)$/rm "\1"/p' /hashdiff | sort >>/syncscript
+sed -nr 's|^-[^ ]+ +\./(.*)$|rm "\1"|p' /hashdiff | sort >>/syncscript
 
 # The PUTs
-sed -nr 's/^\+[^ ]+ +\.\/(.*)$/put "\1" -o "\1"/p' /hashdiff | sort >>/syncscript
+sed -nr 's|^\+[^ ]+ +\./(.*)$|put "\1" -o "\1"|p' /hashdiff | sort >>/syncscript
 
 cat <<EOF >>/syncscript
 put /localhashes -o "${INPUT_HASHFILE}"
