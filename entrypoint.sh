@@ -84,6 +84,8 @@ put /localhashes -o "${INPUT_HASHFILE}"
 EOF
 
 log "Running script"
+
+cat /syncscript
 lftp -f /syncscript
 
 log "Done"
