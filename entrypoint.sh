@@ -69,8 +69,8 @@ set +e
 diff -U0 /remotehashes /localhashes | \
 	tail -n +3 | \
 	sed -nr \
-		-e 's/^-[^ ]+ \.\/+(.*)$/rm "\1"/p' \
-		-e 's/^\+[^ ]+ \.\/+(.*)$/put "\1" -o "\1"/p' | \
+		-e 's/^-[^ ]+ +\.\/(.*)$/rm "\1"/p' \
+		-e 's/^\+[^ ]+ +\.\/(.*)$/put "\1" -o "\1"/p' | \
 	sort
 >>/syncscript
 
