@@ -41,6 +41,8 @@ esac
 log "Hashing files with $hashcmd"
 
 cd "${INPUT_SOURCE}"
+pwd
+ls -l
 find -type f -print0 | xargs -0 "$hashcmd" | sort >/localhashes
 # Ensure it exists
 touch /localhashes
@@ -59,7 +61,7 @@ fi
 log "Creating sync script"
 
 cat <<EOF >/syncscript
-open -u "${INPUT_USERNAME}" --env-password "${INPUT_PASSWORD}" "${INPUT_HOST}"
+open -u "${INPUT_USERNAME}" --env-password "${INPUT_HOST}"
 set passive yes
 cd "${INPUT_DESTINATION}"
 EOF
