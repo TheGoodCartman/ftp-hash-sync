@@ -65,13 +65,13 @@ EOF
 # Diff returns non-zero if there are differences - disable error checking for the next line
 set +e
 
-# Diff, then remove first 3 lines (with filenames), sort so removes are before puts, and then convert to FTP commands
+# Diff, then remove first 3 lines (with filenames), convert to FTP commands, and sort to reduce folder changes and ensure RMs are before PUTs
 diff -U0 /remotehashes /localhashes | \
 	tail -n +3 | \
-	sort -r | \
 	sed -nr \
-		-e 's/^-[^ ]+ +(.*)$/rm "\1"/p' \
-		-e 's/^\+[^ ]+ +(.*)$/put "\1"/p' \
+		-e 's/^-[^ ]+ \.\/+(.*)$/rm "\1"/p' \
+		-e 's/^\+[^ ]+ \.\/+(.*)$/put "\1" -o "\1"/p' | \
+	sort
 >>/syncscript
 
 # Reenable error checking
