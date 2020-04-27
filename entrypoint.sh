@@ -41,11 +41,7 @@ esac
 log "Hashing files with $hashcmd"
 
 cd "${INPUT_SOURCE}"
-pwd
-ls -l
 find -type f -print0 | xargs -0 "$hashcmd" | sort >/localhashes
-# Ensure it exists
-touch /localhashes
 
 log "Fetching remote hash list"
 
@@ -76,7 +72,7 @@ diff -U0 /remotehashes /localhashes | \
 	sed -nr \
 		-e 's/^-[^ ]+ +(.*)$/rm "\1"/p' \
 		-e 's/^\+[^ ]+ +(.*)$/put "\1"/p' \
->>syncscript
+>>/syncscript
 
 # Reenable error checking
 set -e
