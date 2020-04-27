@@ -1,0 +1,39 @@
+name: FTP hash sync
+description: Synchronizes files to a remote FTP repository by using file hashes
+
+inputs:
+    host:
+        description: FTP host
+        required: true
+
+    username:
+        description: FTP username
+        required: true
+
+    password:
+        description: FTP password
+        required: true
+
+    source:
+        description: source path, relative to repository root
+        required: false
+        default: .
+
+    destination:
+        description: destination path
+        required: false
+        default: .
+
+    hashfile:
+        description: hash filename
+        required: false
+        default: hashes.sha256
+
+    hashtype:
+        description: hash type
+        required: false
+        default: sha256
+
+runs:
+    using: docker
+    image: Dockerfile
