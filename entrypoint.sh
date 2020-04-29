@@ -49,8 +49,9 @@ log "Fetching remote hash list"
 
 export LFTP_PASSWORD="${INPUT_PASSWORD}"
 
-if lftp -c "open -u \"${INPUT_USERNAME}\" --env-password \"${INPUT_HOST}\"; get \"${INPUT_DESTINATION}/${INPUT_HASHFILE}\" -o /remotehashes"; then
+if lftp -c "open -u \"${INPUT_USERNAME}\" --env-password \"${INPUT_HOST}\"; get \"${INPUT_DESTINATION}/${INPUT_HASHFILE}\" -o /remotehashesorig"; then
 	log "Succeeded"
+	sort -k 2 /remotehashesorig >/remotehashes
 else
 	warn "Could not fetch remote files - assuming file did not exist"
 	echo "">/remotehashes
