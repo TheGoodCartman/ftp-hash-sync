@@ -16,14 +16,14 @@ Example for GitHub Actions:
 on: push
 name: Publish Website
 jobs:
-	publish
-	  - name: Publish
-		uses: socram8888/ftp-hash-sync@v1
-		with:
-			host: ftp.example.com
-			username: exampleuser
-			password: ${{ secrets.FTP_PASSWORD }}
-			destination: htdocs
+    publish
+      - name: Publish
+        uses: socram8888/ftp-hash-sync@v1
+        with:
+            host: ftp.example.com
+            username: exampleuser
+            password: ${{ secrets.FTP_PASSWORD }}
+            destination: htdocs
 ```
 
 Arguments
