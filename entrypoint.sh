@@ -41,7 +41,9 @@ esac
 log "Hashing files with $hashcmd"
 
 cd "${INPUT_SOURCE}"
-find -type f -print0 | xargs -0 "$hashcmd" | sort >/localhashes
+
+# Sort by file name
+find -type f -print0 | xargs -0 "$hashcmd" | sort -k 2 >/localhashes
 
 log "Fetching remote hash list"
 
@@ -75,10 +77,10 @@ diff -U0 /remotehashes /localhashes | tail -n +3 >/hashdiff
 set -e
 
 # First RMs
-sed -nr 's|^-[^ ]+ +\./(.*)$|rm "\1"|p' /hashdiff | sort >>/syncscript
+sed -nr 's|^-[^ ]+ +\./(.*)$|rm "\1"|p' /hashdiff >>/syncscript
 
 # The PUTs
-sed -nr 's|^\+[^ ]+ +\./(.*)$|put "\1" -o "\1"|p' /hashdiff | sort >>/syncscript
+sed -nr 's|^\+[^ ]+ +\./(.*)$|put "\1" -o "\1"|p' /hashdiff >>/syncscript
 
 cat <<EOF >>/syncscript
 put /localhashes -o "${INPUT_HASHFILE}"
