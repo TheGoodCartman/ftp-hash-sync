@@ -95,6 +95,8 @@ if [ -z "${LFTP_PASSWORD}" ]; then
 	export LFTP_PASSWORD=anonymous
 fi
 
+: | ssh -a -x -s -l "${INPUT_USERNAME}" "${INPUT_HOST}" -vv sftp
+
 connect_boilerplate=$(cat <<EOF
 debug
 set net:timeout "${INPUT_TIMEOUT}"
