@@ -96,6 +96,7 @@ if [ -z "${LFTP_PASSWORD}" ]; then
 fi
 
 connect_boilerplate=$(cat <<EOF
+debug
 set net:timeout "${INPUT_TIMEOUT}"
 set net:max-retries "${INPUT_RETRIES}"
 set sftp:auto-confirm ${autoconfirm}
@@ -115,6 +116,7 @@ fi
 log "Creating sync script"
 
 cat <<EOF >/syncscript
+debug
 ${connect_boilerplate}
 cd "${INPUT_DESTINATION}"
 EOF
