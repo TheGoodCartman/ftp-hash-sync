@@ -63,6 +63,7 @@ case "${INPUT_PROTOCOL}" in
 			autoconfirm=no
 			echo "${INPUT_HOST} ${INPUT_HOSTKEY}" >>~/.ssh/known_hosts
 			# Hash key, or else the SSH command ignores it
+			cat ~/.ssh/known_hosts
 			ssh-keygen -H -f ~/.ssh/known_hosts
 			cat ~/.ssh/known_hosts
 		fi
