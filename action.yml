@@ -1,18 +1,23 @@
 name: FTP hash sync
-description: Synchronizes files to a remote FTP repository by using file hashes
+description: Synchronizes files to a remote FTP or SFTP repository by using file hashes
 
 inputs:
+    protocol:
+        description: Protocol, either "ftp" or "sftp"
+        required: true
+
     host:
-        description: FTP host
+        description: Target host
         required: true
 
     username:
-        description: FTP username
+        description: Target username
         required: true
 
     password:
-        description: FTP password
-        required: true
+        description: Target password
+        required: false
+        default: ''
 
     source:
         description: source path, relative to repository root

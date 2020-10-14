@@ -38,6 +38,16 @@ case "${INPUT_HASHTYPE}" in
 		exit 1
 esac
 
+case "${INPUT_PROTOCOL}" in
+	ftp)
+	sftp)
+		;;
+
+	*)
+		err "Invalid protocol \"${INPUT_PROTOCOL}\""
+		exit 1
+esac
+
 log "Hashing files with $hashcmd"
 
 cd "${INPUT_SOURCE}"
@@ -48,8 +58,12 @@ find -type f -print0 | xargs -0 "$hashcmd" | sort -k 2 >/localhashes
 log "Fetching remote hash list"
 
 export LFTP_PASSWORD="${INPUT_PASSWORD}"
+if [ -z "${LFTP_PASSWORD}" ]; then
+	# Also works as placeholder for LFTP when using SFTP with public key authentication
+	export LFTP_PASSWORD=anonymous
+fi
 
-if lftp -c "open -u \"${INPUT_USERNAME}\" --env-password \"${INPUT_HOST}\"; get \"${INPUT_DESTINATION}/${INPUT_HASHFILE}\" -o /remotehashesorig"; then
+if lftp -c "open -u \"${INPUT_USERNAME}\" --env-password \"${INPUT_PROTOCOL}://${INPUT_HOST}\"; get \"${INPUT_DESTINATION}/${INPUT_HASHFILE}\" -o /remotehashesorig"; then
 	log "Succeeded"
 	sort -k 2 /remotehashesorig >/remotehashes
 else
@@ -60,10 +74,13 @@ fi
 log "Creating sync script"
 
 cat <<EOF >/syncscript
-open -u "${INPUT_USERNAME}" --env-password "${INPUT_HOST}"
-set passive yes
+open -u "${INPUT_USERNAME}" --env-password "${INPUT_PROTOCOL}://${INPUT_HOST}"
 cd "${INPUT_DESTINATION}"
 EOF
+
+if [ "${INPUT_PROTOCOL}" -eq ftp ]; then
+	echo "set passive yes" >>/syncscript
+fi
 
 # Make directories
 find -type d | sed -nr 's|^\./(.*)|mkdir -f "\1"|p' >>/syncscript
