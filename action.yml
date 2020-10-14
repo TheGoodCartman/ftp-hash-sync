@@ -49,6 +49,14 @@ inputs:
         required: false
         default: 10
 
+    clientkey:
+        description: client SSH private key
+        required: false
+
+    hostkey:
+        description: host SSH public key
+        required: false
+
 runs:
     using: docker
     image: Dockerfile
