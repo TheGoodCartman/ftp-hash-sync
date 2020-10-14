@@ -38,8 +38,37 @@ case "${INPUT_HASHTYPE}" in
 		exit 1
 esac
 
+autoconfirm=yes
 case "${INPUT_PROTOCOL}" in
-	ftp|sftp)
+	ftp)
+		if [ ! -z "${INPUT_HOSTKEY}" ]; then
+			err "Unexpected host public key in FTP mode"
+			exit 1
+		fi
+
+		if [ ! -z "${INPUT_CLIENTKEY}" ]; then
+			err "Unexpected client private key in FTP mode"
+			exit 1
+		fi
+
+		;;
+
+	sftp)
+		[ -d ~/.ssh/ ] || mkdir -p ~/.ssh/
+
+		if [ -z "${INPUT_HOSTKEY}" ]; then
+			warn "Not checking host SSH key"
+		else
+			log "Configuring host SSH key"
+			autoconfirm=no
+			echo "${INPUT_HOST} ${INPUT_HOSTKEY}" >>~/.ssh/known_hosts
+		fi
+
+		if [ ! -z "${INPUT_CLIENTKEY}" ]; then
+			log "Configuring client SSH key"
+			echo "${INPUT_CLIENTKEY}" >>~/.ssh/github
+		fi
+
 		;;
 
 	*)
@@ -62,7 +91,16 @@ if [ -z "${LFTP_PASSWORD}" ]; then
 	export LFTP_PASSWORD=anonymous
 fi
 
-if lftp -c "open -u \"${INPUT_USERNAME}\" --env-password \"${INPUT_PROTOCOL}://${INPUT_HOST}\"; get \"${INPUT_DESTINATION}/${INPUT_HASHFILE}\" -o /remotehashesorig"; then
+connect_boilerplate=$(cat <<EOF
+set net:timeout "${INPUT_TIMEOUT}"
+set net:max-retries "${INPUT_RETRIES}"
+set sftp:auto-confirm ${autoconfirm}
+set ftp:passive-mode yes
+open -u "${INPUT_USERNAME}" --env-password "${INPUT_PROTOCOL}://${INPUT_HOST}"
+EOF
+)
+
+if lftp -c "${connect_boilerplate}; get \"${INPUT_DESTINATION}/${INPUT_HASHFILE}\" -o /remotehashesorig"; then
 	log "Succeeded"
 	sort -k 2 /remotehashesorig >/remotehashes
 else
@@ -73,13 +111,9 @@ fi
 log "Creating sync script"
 
 cat <<EOF >/syncscript
-open -u "${INPUT_USERNAME}" --env-password "${INPUT_PROTOCOL}://${INPUT_HOST}"
+${connect_boilerplate}
 cd "${INPUT_DESTINATION}"
 EOF
-
-if [ "${INPUT_PROTOCOL}" -eq ftp ]; then
-	echo "set passive yes" >>/syncscript
-fi
 
 # Make directories
 find -type d | sed -nr 's|^\./(.*)|mkdir -f "\1"|p' >>/syncscript

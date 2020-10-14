@@ -39,6 +39,16 @@ inputs:
         required: false
         default: sha256
 
+    retries:
+        description: connection retries
+        required: false
+        default: 3
+
+    timeout:
+        description: connection timeout
+        required: false
+        default: 10
+
 runs:
     using: docker
     image: Dockerfile
