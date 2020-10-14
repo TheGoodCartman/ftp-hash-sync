@@ -39,8 +39,7 @@ case "${INPUT_HASHTYPE}" in
 esac
 
 case "${INPUT_PROTOCOL}" in
-	ftp)
-	sftp)
+	ftp|sftp)
 		;;
 
 	*)
