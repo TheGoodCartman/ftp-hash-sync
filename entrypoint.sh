@@ -64,6 +64,7 @@ case "${INPUT_PROTOCOL}" in
 			echo "${INPUT_HOST} ${INPUT_HOSTKEY}" >>~/.ssh/known_hosts
 			# Hash key, or else the SSH command ignores it
 			ssh-keygen -H -f ~/.ssh/known_hosts
+			cat ~/.ssh/known_hosts
 		fi
 
 		if [ ! -z "${INPUT_CLIENTKEY}" ]; then
