@@ -54,24 +54,24 @@ case "${INPUT_PROTOCOL}" in
 		;;
 
 	sftp)
-		[ -d ~/.ssh/ ] || mkdir -p ~/.ssh/
+		[ -d /root/.ssh/ ] || mkdir -p /root/.ssh/
 
 		if [ -z "${INPUT_HOSTKEY}" ]; then
 			warn "Not checking host SSH key"
 		else
 			log "Configuring host SSH key"
 			autoconfirm=no
-			echo "${INPUT_HOST} ${INPUT_HOSTKEY}" >>~/.ssh/known_hosts
+			echo "${INPUT_HOST} ${INPUT_HOSTKEY}" >>/root/.ssh/known_hosts
 			# Hash key, or else the SSH command ignores it
-			cat ~/.ssh/known_hosts
-			ssh-keygen -H -f ~/.ssh/known_hosts
-			cat ~/.ssh/known_hosts
+			cat /root/.ssh/known_hosts
+			ssh-keygen -H -f /root/.ssh/known_hosts
+			cat /root/.ssh/known_hosts
 		fi
 
 		if [ ! -z "${INPUT_CLIENTKEY}" ]; then
 			log "Configuring client SSH key"
-			echo "${INPUT_CLIENTKEY}" >>~/.ssh/id_rsa
-			od -tx1 ~/.ssh/id_rsa
+			echo -n "${INPUT_CLIENTKEY}" >>/root/.ssh/id_rsa
+			sha256sum /root/.ssh/id_rsa
 		fi
 
 		;;
