@@ -3,21 +3,29 @@ description: Synchronizes files to a remote FTP or SFTP repository by using file
 
 inputs:
     protocol:
-        description: Protocol, either "ftp" or "sftp"
+        description: protocol, either "ftp" or "sftp"
         required: true
 
     host:
-        description: Target host
+        description: target host
         required: true
 
     username:
-        description: Target username
+        description: target username
         required: true
 
     password:
-        description: Target password
+        description: password (for FTP only)
         required: false
         default: ''
+
+    clientkey:
+        description: client SSH private key (for SFTP only)
+        required: false
+
+    hostkey:
+        description: host SSH public key (for SFTP only)
+        required: false
 
     source:
         description: source path, relative to repository root
@@ -48,14 +56,6 @@ inputs:
         description: connection timeout
         required: false
         default: 10
-
-    clientkey:
-        description: client SSH private key
-        required: false
-
-    hostkey:
-        description: host SSH public key
-        required: false
 
 runs:
     using: docker
