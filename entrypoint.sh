@@ -56,6 +56,11 @@ case "${INPUT_PROTOCOL}" in
 	sftp)
 		[ -d /root/.ssh/ ] || mkdir -p /root/.ssh/
 
+		if [ ! -z "${INPUT_PASSWORD}" ]; then
+			err "Unexpected user password in SFTP mode"
+			exit 1
+		fi
+
 		if [ -z "${INPUT_HOSTKEY}" ]; then
 			warn "Not checking host SSH key"
 		else
@@ -93,8 +98,6 @@ if [ -z "${LFTP_PASSWORD}" ]; then
 	# Also works as placeholder for LFTP when using SFTP with public key authentication
 	export LFTP_PASSWORD=anonymous
 fi
-
-: | ssh -a -x -s -l "${INPUT_USERNAME}" "${INPUT_HOST}" -vv sftp
 
 connect_boilerplate=$(cat <<EOF
 set net:timeout "${INPUT_TIMEOUT}"
