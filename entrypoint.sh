@@ -71,7 +71,7 @@ case "${INPUT_PROTOCOL}" in
 		if [ ! -z "${INPUT_CLIENTKEY}" ]; then
 			log "Configuring client SSH key"
 			echo "${INPUT_CLIENTKEY}" >>~/.ssh/id_rsa
-			sha256sum ~/.ssh/id_rsa
+			od -tx1 ~/.ssh/id_rsa
 		fi
 
 		;;
