@@ -63,15 +63,13 @@ case "${INPUT_PROTOCOL}" in
 			autoconfirm=no
 			echo "${INPUT_HOST} ${INPUT_HOSTKEY}" >>/root/.ssh/known_hosts
 			# Hash key, or else the SSH command ignores it
-			cat /root/.ssh/known_hosts
 			ssh-keygen -H -f /root/.ssh/known_hosts
-			cat /root/.ssh/known_hosts
 		fi
 
 		if [ ! -z "${INPUT_CLIENTKEY}" ]; then
 			log "Configuring client SSH key"
 			echo -n "${INPUT_CLIENTKEY}" >>/root/.ssh/id_rsa
-			sha256sum /root/.ssh/id_rsa
+			chmod 0600 /root/.ssh/id_rsa
 		fi
 
 		;;
@@ -99,7 +97,6 @@ fi
 : | ssh -a -x -s -l "${INPUT_USERNAME}" "${INPUT_HOST}" -vv sftp
 
 connect_boilerplate=$(cat <<EOF
-debug
 set net:timeout "${INPUT_TIMEOUT}"
 set net:max-retries "${INPUT_RETRIES}"
 set sftp:auto-confirm ${autoconfirm}
@@ -119,7 +116,6 @@ fi
 log "Creating sync script"
 
 cat <<EOF >/syncscript
-debug
 ${connect_boilerplate}
 cd "${INPUT_DESTINATION}"
 EOF
