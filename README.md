@@ -8,17 +8,13 @@ It works by calculating a hash list of all the files on the input directory, the
 Usage
 -----
 
-You can see a fully automated Jekyll build setup on the repository for my website, at [socram8888/orca.pet](https://github.com/socram8888/orca.pet/blob/master/.github/workflows/main.yml).
-
-Example for GitHub Actions:
-
 ```yml
 on: push
 name: Publish Website
 jobs:
     publish
       - name: Publish
-        uses: socram8888/ftp-hash-sync@v1
+        uses: TheGoodCartman/ftp-hash-sync@v1
         with:
             host: ftp.example.com
             username: exampleuser
@@ -45,3 +41,8 @@ Caveats
 Currently the script always create all the folders needed for uploading the files, and will not remove the old structure even if the folders are empty.
 
 It uses LFTP behind the scenes, so it should also work for SFTP and FTPS, but it is completely untested.
+
+Declaration
+-----------
+
+This Action was created under ISC License by https://github.com/socram8888/
